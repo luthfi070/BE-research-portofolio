@@ -1,0 +1,28 @@
+get http://localhost:3000/
+
+###
+
+post http://localhost:3000/regate/login
+Content-Type: application/json
+
+{
+    "username": "luthfimusafa",
+    "password": "luthfims"
+}
+
+###
+
+post http://localhost:3000/regate/register
+Content-Type: application/json
+
+{
+    "id": 1,
+    "fullName": "Luthfi Fitra Musyaffa",
+    "username": "luthfimusafa",
+    "password": "luthfims",
+    "workStatus": "Teacher at SMP 23"
+}
+
+###
+
+post http://localhost:3000/regate/viewUser
