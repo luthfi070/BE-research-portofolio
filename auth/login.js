@@ -5,9 +5,6 @@ const bcrypt = require("bcrypt");
 const userModel = require("../Schema/userSchema");
 
 const salt = bcrypt.genSaltSync(10);
-// dotenv.config();
-
-// process.env.TOKEN_SECRET;
 
 router.post("/login", (req, res) => {
   const userPayload = {
@@ -42,21 +39,9 @@ router.post("/login", (req, res) => {
         });
       }
     });
-  //   if(findUser()){
-
-  //   }
-  //   jwt.sign({ user }, "secretkey", (err, token) => {
-  //     res.json({
-  //       msg: "Success",
-  //       //   result: findUser(),
-  //       data: req.body.username,
-  //       token: token,
-  //     });
-  //   });
 });
 
 router.post("/register", (req, res) => {
-  // let cryptedPass = bcrypt.hashSync(req.body.password, salt)
   const newUser = new userModel();
   newUser.id = req.body.userId;
   newUser.fullName = req.body.fullName;
