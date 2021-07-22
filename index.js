@@ -25,5 +25,5 @@ app.use("/", (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log("app connected");
+  console.log("app connecsted");
 });
