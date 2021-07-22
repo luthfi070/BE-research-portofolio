@@ -24,6 +24,6 @@ app.use("/", (req, res) => {
   res.json({ message: "api connected" });
 });
 
-app.listen(3000, "0.0.0.0", () => {
+app.listen(process.env.PORT || 3000, "0.0.0.0", () => {
   console.log("app connecsted");
 });
