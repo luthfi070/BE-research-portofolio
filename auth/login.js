@@ -29,13 +29,11 @@ router.post("/login", (req, res) => {
         } else {
           res.json({
             result: "no match",
-            matchResult: bcrypt.compareSync(req.body.password, result.password),
           });
         }
       } else {
         res.json({
           result: "no match",
-          matchResult: bcrypt.compareSync(req.body.password, result.password),
         });
       }
     });
