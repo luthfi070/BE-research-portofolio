@@ -12,32 +12,28 @@ router.post("/login", cors(), (req, res) => {
     password: req.body.password,
   };
 
-  return userModel
-    .findOne({ username: req.body.username }, { password: 1 })
-    .then((result) => {
-      if (result) {
-        if (bcrypt.compareSync(req.body.password, result.password)) {
-          jwt.sign({ userPayload }, "secretkey", (err, token) => {
-            res.json({
-              result: "matched",
-              matchResult: bcrypt.compareSync(
-                req.body.password,
-                result.password
-              ),
-              token: token,
-            });
-          });
-        } else {
+  return userModel.findOne({ username: req.body.username }).then((result) => {
+    if (result) {
+      if (bcrypt.compareSync(req.body.password, result.password)) {
+        jwt.sign({ userPayload }, "secretkey", (err, token) => {
           res.json({
-            result: "no match, correct username false password",
+            result: "matched",
+            matchResult: bcrypt.compareSync(req.body.password, result.password),
+            payload: [result],
+            token: token,
           });
-        }
+        });
       } else {
         res.json({
-          result: "no match",
+          result: "no match, correct username false password",
         });
       }
-    });
+    } else {
+      res.json({
+        result: "no match",
+      });
+    }
+  });
 });
 
 router.post("/register", cors(), (req, res) => {
