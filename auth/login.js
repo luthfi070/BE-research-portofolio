@@ -19,7 +19,14 @@ router.post("/login", cors(), (req, res) => {
           res.json({
             result: "matched",
             matchResult: bcrypt.compareSync(req.body.password, result.password),
-            payload: [result],
+            payload: [
+              {
+                id: result._id,
+                fullname: result.fullName,
+                username: result.username,
+                workStatus: result.workStatus,
+              },
+            ],
             token: token,
           });
         });
