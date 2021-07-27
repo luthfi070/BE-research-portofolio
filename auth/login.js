@@ -3,25 +3,21 @@ const router = express.Router();
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const userModel = require("../Schema/userSchema");
-
+const cors = require("cors");
 const salt = bcrypt.genSaltSync(10);
 
-router.post("/login", (req, res) => {
+router.post("/login", cors(), (req, res) => {
   const userPayload = {
     username: req.body.username,
     password: req.body.password,
   };
+
   return userModel
     .findOne({ username: req.body.username }, { password: 1 })
     .then((result) => {
       if (result) {
         if (bcrypt.compareSync(req.body.password, result.password)) {
           jwt.sign({ userPayload }, "secretkey", (err, token) => {
-            res.header("Access-Control-Allow-Origin", "*");
-            res.header(
-              "Access-Control-Allow-Headers",
-              "Origin, X-Requested-With, Content-Type, Accept"
-            );
             res.json({
               result: "matched",
               matchResult: bcrypt.compareSync(
@@ -44,7 +40,7 @@ router.post("/login", (req, res) => {
     });
 });
 
-router.post("/register", (req, res) => {
+router.post("/register", cors(), (req, res) => {
   const newUser = new userModel();
   newUser.id = req.body.userId;
   newUser.fullName = req.body.fullName;
@@ -57,11 +53,6 @@ router.post("/register", (req, res) => {
     if (err) {
       console.log(error);
     } else {
-      res.header("Access-Control-Allow-Origin", "*");
-      res.header(
-        "Access-Control-Allow-Origin",
-        "Origin, X-Requested-With, Content-Type, Accept"
-      );
       res.json({
         msg: "DataInsered",
         payload: data,
