@@ -7,6 +7,12 @@ const userModel = require("../Schema/userSchema");
 const salt = bcrypt.genSaltSync(10);
 
 router.post("/login", (req, res) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Origin",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+
   const userPayload = {
     username: req.body.username,
     password: req.body.password,
@@ -40,6 +46,12 @@ router.post("/login", (req, res) => {
 });
 
 router.post("/register", (req, res) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Origin",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+
   const newUser = new userModel();
   newUser.id = req.body.userId;
   newUser.fullName = req.body.fullName;
