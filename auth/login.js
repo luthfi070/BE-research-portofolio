@@ -19,7 +19,7 @@ router.post("/login", (req, res) => {
           jwt.sign({ userPayload }, "secretkey", (err, token) => {
             res.header("Access-Control-Allow-Origin", "*");
             res.header(
-              "Access-Control-Allow-Origin",
+              "Access-Control-Allow-Headers",
               "Origin, X-Requested-With, Content-Type, Accept"
             );
             res.json({
