@@ -15,6 +15,7 @@ mongoose
   })
   .catch((err) => console.error("error", err));
 
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
