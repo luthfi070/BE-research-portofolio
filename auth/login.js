@@ -49,13 +49,21 @@ router.post("/register", cors(), (req, res) => {
   newUser.password = bcrypt.hashSync(req.body.password, salt);
   newUser.workStatus = req.body.workStatus;
 
-  newUser.save((err, data) => {
-    if (err) {
-      console.log(error);
-    } else {
+  return userModel.findOne({ username: req.body.username }).then((result) => {
+    if (result) {
       res.json({
-        msg: "DataInsered",
-        payload: data,
+        msg: "Username already Existed",
+      });
+    } else {
+      newUser.save((err, data) => {
+        if (err) {
+          console.log(error);
+        } else {
+          res.json({
+            msg: "DataInsered",
+            payload: data,
+          });
+        }
       });
     }
   });

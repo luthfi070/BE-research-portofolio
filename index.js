@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const port = 3000;
 const mongoose = require("mongoose");
+const cors = require("cors");
 require("dotenv").config();
 
 mongoose
@@ -19,6 +20,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // router
 app.use("/regate", require("./auth/login"));
+app.use("/regate/user", require("./user/userAction"));
 
 app.use("/", (req, res) => {
   res.json({ message: "api connected" });

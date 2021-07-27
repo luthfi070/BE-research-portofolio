@@ -12,16 +12,21 @@ Content-Type: application/json
 
 ###
 
-post https://research-gate.herokuapp.com/regate/register
+post http://localhost:3000/regate/register
 Content-Type: application/json
 
 {
     "fullName": "John Doe",
-    "username": "John",
+    "username": "Johns",
     "password": "Doe",
     "workStatus": "Teacher at SMP 23"
 }
 
 ###
 
-post http://localhost:3000/regate/viewUser
+get http://localhost:3000/regate/user/viewUser
+Content-Type: application/json
+
+{
+    "id": "60f988c8fc563f0004a42499"
+}
