@@ -8,23 +8,21 @@ const salt = bcrypt.genSaltSync(10);
 
 router.post("/login", cors(), (req, res) => {
   const userPayload = {
-    username: req.body.username,
+    email: req.body.email,
     password: req.body.password,
   };
 
-  return userModel.findOne({ username: req.body.username }).then((result) => {
+  return userModel.findOne({ email: req.body.email }).then((result) => {
     if (result) {
       if (bcrypt.compareSync(req.body.password, result.password)) {
         jwt.sign({ userPayload }, "secretkey", (err, token) => {
           res.json({
-            result: "matched",
-            matchResult: bcrypt.compareSync(req.body.password, result.password),
+            result: "Logged In",
             payload: [
               {
                 id: result._id,
                 fullname: result.fullName,
-                username: result.username,
-                workStatus: result.workStatus,
+                email: result.email,
               },
             ],
             token: token,
@@ -32,7 +30,7 @@ router.post("/login", cors(), (req, res) => {
         });
       } else {
         res.json({
-          result: "no match, correct username false password",
+          result: "no match",
         });
       }
     } else {
@@ -48,14 +46,13 @@ router.post("/register", cors(), (req, res) => {
   newUser.id = req.body.userId;
   newUser.fullName = req.body.fullName;
   newUser.email = req.body.email;
-  newUser.username = req.body.username;
   newUser.password = bcrypt.hashSync(req.body.password, salt);
   newUser.workStatus = req.body.workStatus;
 
-  return userModel.findOne({ username: req.body.username }).then((result) => {
+  return userModel.findOne({ email: req.body.email }).then((result) => {
     if (result) {
       res.json({
-        msg: "Username already Existed",
+        msg: "Email already Existed",
       });
     } else {
       newUser.save((err, data) => {
@@ -63,8 +60,13 @@ router.post("/register", cors(), (req, res) => {
           console.log(error);
         } else {
           res.json({
-            msg: "DataInsered",
-            payload: data,
+            msg: "User Registered",
+            payload: [
+              {
+                id: data._id,
+                fullname: data.fullName,
+              },
+            ],
           });
         }
       });
