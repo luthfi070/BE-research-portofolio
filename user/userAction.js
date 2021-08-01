@@ -4,23 +4,7 @@ const userModel = require("../Schema/userSchema");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
 
-router.get("/viewUser", cors(), (req, res, next) => {
-  let token = req.headers["x-access-token"];
-  if (!token) {
-    return res.json({
-      auth: false,
-      msg: "no token submitted",
-    });
-  }
-
-  jwt.verify(token, "secretkey", (err, decoded) => {
-    if (err)
-      return res.json({
-        auth: false,
-        msg: "failed to auth",
-      });
-  });
-
+router.get("/viewUser", cors(), verifyToken, (req, res, next) => {
   return userModel.findOne({ _id: req.body.id }).then((result) => {
     if (result) {
       res.json({
@@ -33,5 +17,21 @@ router.get("/viewUser", cors(), (req, res, next) => {
     }
   });
 });
+
+function verifyToken(req, res, next) {
+  let token = req.headers["authorization"];
+
+  if (token) {
+    const bearer = token.split(" ");
+    const bearerToken = bearer[1];
+    req.token = bearerToken;
+    next();
+  } else {
+    res.json({
+      msg: "no token submitted",
+      result: req.headers["Authorization"],
+    });
+  }
+}
 
 module.exports = router;

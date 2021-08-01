@@ -25,7 +25,7 @@ Content-Type: application/json
 
 get http://localhost:3000/regate/user/viewUser
 Content-Type: application/json
-x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyUGF5bG9hZCI6eyJlbWFpbCI6IkpvaG5AZ21haWwuY29tIiwicGFzc3dvcmQiOiJqb2huZG9lIn0sImlhdCI6MTYyNzgyODI5MX0.LChXB3M7fdGHoUx-KD_xErtxIO7GC0AIsOe_ZR71Ky4
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyUGF5bG9hZCI6eyJlbWFpbCI6IkpvaG5AZ21haWwuY29tIiwicGFzc3dvcmQiOiJqb2huZG9lIn0sImlhdCI6MTYyNzgyODI5MX0.LChXB3M7fdGHoUx-KD_xErtxIO7GC0AIsOe_ZR71Ky4
 
 {
     "id": "6106aa7c5ed6301bed78bc18"
