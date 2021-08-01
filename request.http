@@ -6,8 +6,8 @@ post http://localhost:3000/regate/login
 Content-Type: application/json
 
 {
-    "username": "John",
-    "password": "Doe"
+    "email": "John@gmail.com",
+    "password": "johndoe"
 }
 
 ###
@@ -17,9 +17,8 @@ Content-Type: application/json
 
 {
     "fullName": "John Doe",
-    "email": "John@gmail.com",
+    "email": "Johssn@gmail.com",
     "password": "johndoe",
-    "workStatus": "Teacher at SMP 23"
 }
 
 ###

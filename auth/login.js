@@ -47,7 +47,6 @@ router.post("/register", cors(), (req, res) => {
   newUser.fullName = req.body.fullName;
   newUser.email = req.body.email;
   newUser.password = bcrypt.hashSync(req.body.password, salt);
-  newUser.workStatus = req.body.workStatus;
 
   return userModel.findOne({ email: req.body.email }).then((result) => {
     if (result) {
