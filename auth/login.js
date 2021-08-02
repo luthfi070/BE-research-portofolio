@@ -9,7 +9,6 @@ const salt = bcrypt.genSaltSync(10);
 router.post("/login", cors(), (req, res) => {
   const userPayload = {
     email: req.body.email,
-    password: req.body.password,
   };
 
   return userModel.findOne({ email: req.body.email }).then((result) => {
