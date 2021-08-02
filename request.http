@@ -35,7 +35,8 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyUGF5bG9hZCI6e
 
 get https://research-gate.herokuapp.com/regate/user/viewUser
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyUGF5bG9hZCI6eyJlbWFpbCI6IkpvaG5AZ21haWwuY29tIn0sImlhdCI6MTYyNzkxMzMwNH0.b4ZigVZxKo3MUMZa8m8BzkYxwsvf9MeDO1rRGVXjDX0
 
 {
-    "id": "60f3e6881f736723ca49bab7"
+    "id": "6106aa7c5ed6301bed78bc18"
 }

@@ -28,14 +28,10 @@ router.post("/login", cors(), (req, res) => {
           });
         });
       } else {
-        res.json({
-          result: "no match",
-        });
+        res.sendStatus(404);
       }
     } else {
-      res.json({
-        result: "no match",
-      });
+      res.sendStatus(404);
     }
   });
 });

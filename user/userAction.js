@@ -9,24 +9,29 @@ router.get("/viewUser", cors(), verifyToken, (req, res) => {
     if (err) {
       res.sendStatus(403);
     } else {
-      return userModel.findOne({ _id: req.body.id }).then((result) => {
-        if (result) {
-          res.json({
-            dataUser: [
-              {
-                fullname: result.fullName,
-                email: result.email,
-                workStatus: result.workStatus,
-              },
-            ],
-            iat: data.iat,
-          });
-        } else {
-          res.json({
-            msg: "error not found",
-          });
-        }
-      });
+      return userModel
+        .findOne({ _id: req.body.id })
+        .then((result, err) => {
+          if (result) {
+            res.json({
+              dataUser: [
+                {
+                  fullname: result.fullName,
+                  email: result.email,
+                  workStatus: result.workStatus,
+                },
+              ],
+              iat: data.iat,
+            });
+          } else if (err) {
+            res.json({
+              msg: "User not found",
+            });
+          }
+        })
+        .catch((err) => {
+          res.sendStatus(404);
+        });
     }
   });
 });
