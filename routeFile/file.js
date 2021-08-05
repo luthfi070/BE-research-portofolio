@@ -41,6 +41,7 @@ router.post(
             res.json({
               msg: "file submitted",
               result: result,
+              researchFileLink: `https://research-gate.herokuapp.com/uploads/researchFile/${req.file.filename}`,
               file: {
                 destination: req.file.destination,
                 filename: req.file.filename,
