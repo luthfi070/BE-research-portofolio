@@ -16,6 +16,7 @@ mongoose
   .catch((err) => console.error("error", err));
 
 app.use(cors({ credentials: true }));
+app.use(express.static("public"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
