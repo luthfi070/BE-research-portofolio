@@ -1,9 +1,10 @@
 const mongoose = require("mongoose");
 
+const dateFormat = Date;
 const fileSchema = new mongoose.Schema({
   articleTitle: String,
   author: String,
-  publicationDate: Date,
+  publicationDate: dateFormat,
   journalTitle: String,
   volume: Number,
   issue: Number,
