@@ -15,13 +15,14 @@ mongoose
   })
   .catch((err) => console.error("error", err));
 
-app.use(cors({credentials: true}));
+app.use(cors({ credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // router
 app.use("/regate", require("./auth/login"));
 app.use("/regate/user", require("./user/userAction"));
+app.use("/regate/file", require("./routeFile/file"));
 
 app.use("/", (req, res) => {
   res.json({ message: "api connected" });

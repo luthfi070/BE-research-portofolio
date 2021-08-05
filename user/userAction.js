@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const userModel = require("../Schema/userSchema");
+const verifyToken = require("../auth/verifyToken");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
 
@@ -35,18 +36,5 @@ router.get("/viewUser", cors(), verifyToken, (req, res) => {
     }
   });
 });
-
-function verifyToken(req, res, next) {
-  let token = req.headers["authorization"];
-
-  if (token) {
-    const bearer = token.split(" ");
-    const bearerToken = bearer[1];
-    req.token = bearerToken;
-    next();
-  } else {
-    res.sendStatus(403);
-  }
-}
 
 module.exports = router;
