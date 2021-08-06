@@ -57,16 +57,7 @@ router.post(
 router.get("/research", cors(), verifyToken, (req, res) => {
   return fileSchema.find({}, (err, result) => {
     res.json({
-      data: {
-        id: result._id,
-        uploaderName: result.uploaderName,
-        uploaderID: resuklt.uploaderID,
-        articleTitle: result.articleTitle,
-        publicationDate: result.publicationDate,
-        readsCount: result.downloadCount,
-        fileName: result.fileName,
-        fileLink: result.fileLink,
-      },
+      result: result,
     });
   });
 });
