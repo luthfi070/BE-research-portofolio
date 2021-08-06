@@ -34,7 +34,7 @@ router.post("/login", cors(), (req, res) => {
       }
     } else {
       res.json({
-        msg: "something wrong",
+        msg: "wrong email",
       });
     }
   });
