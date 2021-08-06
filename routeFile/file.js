@@ -25,6 +25,7 @@ router.post(
       description: req.body.description,
       fileName: req.file.filename,
       file: req.file.path,
+      fileLink: `https://research-gate.herokuapp.com/uploads/researchFile/${req.file.filename}`,
       uploaderID: req.body.id,
       uploaderName: req.body.uploaderName,
       downloadCount: 0,
@@ -44,7 +45,6 @@ router.post(
             res.json({
               msg: "file submitted",
               researchFileLink: `https://research-gate.herokuapp.com/uploads/researchFile/${req.file.filename}`,
-              result: result,
             });
           }
         });
@@ -80,7 +80,7 @@ router.put("/download", cors(), verifyToken, (req, res) => {
         } else {
           res.json({
             msg: "updated",
-            link: result,
+            link: `https://research-gate.herokuapp.com/uploads/researchFile/${result.fileName}`,
           });
         }
       }

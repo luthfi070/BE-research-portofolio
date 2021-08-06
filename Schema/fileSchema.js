@@ -12,6 +12,7 @@ const fileSchema = new mongoose.Schema({
   description: String,
   fileName: String,
   file: String,
+  fileLink: String,
   uploaderID: String,
   uploaderName: String,
   downloadCount: Number,
