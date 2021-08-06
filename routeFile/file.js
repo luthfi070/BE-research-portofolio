@@ -60,6 +60,7 @@ router.get("/research", cors(), verifyToken, (req, res) => {
       data: {
         id: result._id,
         uploaderName: result.uploaderName,
+        uploaderID: resuklt.uploaderID,
         articleTitle: result.articleTitle,
         publicationDate: result.publicationDate,
         readsCount: result.downloadCount,
