@@ -10,6 +10,7 @@ const fileSchema = new mongoose.Schema({
   issue: Number,
   pages: Number,
   description: String,
+  fileName: String,
   file: String,
   uploaderID: String,
   uploaderName: String,

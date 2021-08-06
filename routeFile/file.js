@@ -7,6 +7,7 @@ const fs = require("fs");
 const fileSchema = require("../Schema/fileSchema");
 const upload = require("../fileUpload/multerFolder");
 
+/// Create File
 router.post(
   "/createFile",
   cors(),
@@ -22,6 +23,7 @@ router.post(
       issue: req.body.issue,
       pages: req.body.pages,
       description: req.body.description,
+      fileName: req.file.filename,
       file: req.file.path,
       uploaderID: req.body.id,
       uploaderName: req.body.uploaderName,
@@ -42,6 +44,7 @@ router.post(
             res.json({
               msg: "file submitted",
               researchFileLink: `https://research-gate.herokuapp.com/uploads/researchFile/${req.file.filename}`,
+              result: result,
             });
           }
         });
@@ -50,6 +53,39 @@ router.post(
   }
 );
 
-module.exports = router;
+//Read File
+router.get("/research", cors(), verifyToken, (req, res) => {
+  return fileSchema.find({}, (err, result) => {
+    res.json({
+      result: result,
+    });
+  });
+});
 
-const mongoose = require("mongoose");
+//Download File
+router.put("/download", cors(), verifyToken, (req, res) => {
+  // return fileSchema.findOneAndUpdate({ _id: req.body.id }, (err, result) => {
+
+  // })
+  return fileSchema.find({ _id: req.body.id }, (err, result) => {
+    let payload = {
+      downloadCount: result[0].downloadCount + 1,
+    };
+    return fileSchema.findOneAndUpdate(
+      { _id: req.body.id },
+      payload,
+      (err, result) => {
+        if (err) {
+          res.sendStatus(404);
+        } else {
+          res.json({
+            msg: "updated",
+            link: result,
+          });
+        }
+      }
+    );
+  });
+});
+
+module.exports = router;
