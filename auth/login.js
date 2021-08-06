@@ -28,10 +28,14 @@ router.post("/login", cors(), (req, res) => {
           });
         });
       } else {
-        res.sendStatus(404);
+        res.json({
+          msg: "wrong password",
+        });
       }
     } else {
-      res.sendStatus(404);
+      res.json({
+        msg: "something wrong",
+      });
     }
   });
 });
