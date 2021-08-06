@@ -13,6 +13,7 @@ const fileSchema = new mongoose.Schema({
   file: String,
   uploaderID: String,
   uploaderName: String,
+  downloadCount: Number,
 });
 
 module.exports = mongoose.model("file", fileSchema);
