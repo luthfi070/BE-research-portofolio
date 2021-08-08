@@ -23,7 +23,9 @@ router.post(
       issue: req.body.issue,
       pages: req.body.pages,
       description: req.body.description,
+      fileName: req.file.filename,
       file: req.file.path,
+      fileLink: `https://research-gate.herokuapp.com/uploads/researchFile/${req.file.filename}`,
       uploaderID: req.body.id,
       uploaderName: req.body.uploaderName,
       downloadCount: 0,
@@ -60,11 +62,40 @@ router.get("/research", cors(), verifyToken, (req, res) => {
   });
 });
 
+//Edit File
+router.put("/editResearch", cors(), verifyToken, (req, res) => {
+  let payload = {
+    articleTitle: req.body.name,
+    author: req.body.author,
+    publicationDate: req.body.publicationDate,
+    journalTitle: req.body.journalTitle,
+    volume: req.body.volume,
+    issue: req.body.issue,
+    pages: req.body.pages,
+    description: req.body.description,
+  };
+
+  return fileSchema.findOneAndUpdate(
+    { _id: req.body.id },
+    payload,
+    {
+      new: true,
+    },
+    (err, result) => {
+      if (err) {
+        res.sendStatus(404);
+      } else {
+        res.json({
+          msg: "success",
+          result: result,
+        });
+      }
+    }
+  );
+});
+
 //Download File
 router.put("/download", cors(), verifyToken, (req, res) => {
-  // return fileSchema.findOneAndUpdate({ _id: req.body.id }, (err, result) => {
-
-  // })
   return fileSchema.find({ _id: req.body.id }, (err, result) => {
     let payload = {
       downloadCount: result[0].downloadCount + 1,
