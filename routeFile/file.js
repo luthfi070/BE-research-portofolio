@@ -54,7 +54,7 @@ router.post(
 );
 
 //Read File
-router.get("/research", cors(), verifyToken, (req, res) => {
+router.get("/research", (req, res) => {
   return fileSchema.find({}, (err, result) => {
     res.json({
       result: result,
@@ -94,6 +94,19 @@ router.put("/editResearch", cors(), verifyToken, (req, res) => {
   );
 });
 
+//Delete Research
+router.delete("/deleteResearch", cors(), verifyToken, (req, res) => {
+  return fileSchema.findOneAndRemove({ _id: req.body.id }, (err, result) => {
+    if (err) {
+      res.sendStatus(404);
+    } else {
+      res.json({
+        msg: "Deleted",
+      });
+    }
+  });
+});
+
 //Get Research by ID
 router.get("/getDetailResearch", cors(), verifyToken, (req, res) => {
   return fileSchema.find({ _id: req.body.id }, (err, result) => {
@@ -101,7 +114,7 @@ router.get("/getDetailResearch", cors(), verifyToken, (req, res) => {
       res.sendStatus(404);
     } else {
       res.json({
-        msg: result,
+        result: result,
       });
     }
   });
