@@ -62,7 +62,7 @@ router.post(
                         });
                       } else {
                         res.json({
-                          msg: "file submitted",
+                          msg: "file submited",
                           researchFileLink: `https://research-gate.herokuapp.com/uploads/researchFile/${req.file.filename}`,
                           researchCount: researchCount,
                         });
