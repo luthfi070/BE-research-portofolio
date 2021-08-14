@@ -5,7 +5,7 @@ const verifyToken = require("../auth/verifyToken");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
 
-router.get("/viewUser", cors(), verifyToken, (req, res) => {
+router.post("/viewUser", cors(), verifyToken, (req, res) => {
   jwt.verify(req.token, "secretkey", (err, data) => {
     if (err) {
       res.sendStatus(403);
