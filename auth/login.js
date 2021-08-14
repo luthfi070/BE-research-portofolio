@@ -46,6 +46,12 @@ router.post("/register", cors(), (req, res) => {
   newUser.fullName = req.body.fullName;
   newUser.email = req.body.email;
   newUser.password = bcrypt.hashSync(req.body.password, salt);
+  newUser.workStatus = "";
+  newUser.researches = 0;
+  newUser.readers = 0;
+  newUser.fields = 0;
+  newUser.bookmarks = [];
+  newUser.photoProfile = "";
 
   return userModel.findOne({ email: req.body.email }).then((result) => {
     if (result) {

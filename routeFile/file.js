@@ -6,6 +6,7 @@ const verifyToken = require("../auth/verifyToken");
 const fs = require("fs");
 const fileSchema = require("../Schema/fileSchema");
 const upload = require("../fileUpload/multerFolder");
+const userSchema = require("../Schema/userSchema");
 
 /// Create File
 router.post(
@@ -42,10 +43,35 @@ router.post(
               data: result,
             });
           } else {
-            res.json({
-              msg: "file submitted",
-              researchFileLink: `https://research-gate.herokuapp.com/uploads/researchFile/${req.file.filename}`,
-            });
+            return userSchema.find(
+              { _id: req.body.uploaderID },
+              (err, result) => {
+                const researchCount = {
+                  researches: result[0].researches + 1,
+                };
+                if (err) {
+                  res.sendStatus(404);
+                } else {
+                  return userSchema.findOneAndUpdate(
+                    { _id: req.body.uploaderID },
+                    researchCount,
+                    (err, result) => {
+                      if (err) {
+                        res.json({
+                          msg: result,
+                        });
+                      } else {
+                        res.json({
+                          msg: "file submitted",
+                          researchFileLink: `https://research-gate.herokuapp.com/uploads/researchFile/${req.file.filename}`,
+                          researchCount: researchCount,
+                        });
+                      }
+                    }
+                  );
+                }
+              }
+            );
           }
         });
       }
