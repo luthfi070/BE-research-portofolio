@@ -158,11 +158,28 @@ router.put("/download", cors(), verifyToken, (req, res) => {
         if (err) {
           res.sendStatus(404);
         } else {
-          return userSchema.findOneAndUpdate({ _id: result.uploaderID });
-          res.json({
-            msg: "updated",
-            link: `https://research-gate.herokuapp.com/uploads/researchFile/${result.fileName}`,
-          });
+          return userSchema.find(
+            { _id: result.uploaderID },
+            (err, resultUser) => {
+              const readerCount = {
+                readers: resultUser[0].readers + 1,
+              };
+              if (err) {
+                res.sendStatus(402);
+              } else {
+                return userSchema.findOneAndUpdate(
+                  { _id: result.uploaderID },
+                  readerCount,
+                  (err, resultUser) => {
+                    res.json({
+                      msg: "updated",
+                      link: `https://research-gate.herokuapp.com/uploads/researchFile/${result.fileName}`,
+                    });
+                  }
+                );
+              }
+            }
+          );
         }
       }
     );
