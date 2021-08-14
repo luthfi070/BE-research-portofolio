@@ -5,6 +5,7 @@ const verifyToken = require("../auth/verifyToken");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const upload = require("../fileUpload/multerImage");
+const fileSchema = require("../Schema/fileSchema");
 
 /// Read User
 router.post("/viewUser", cors(), verifyToken, (req, res) => {
@@ -69,5 +70,20 @@ router.put(
     );
   }
 );
+
+///Get User Research
+router.post("/getUserResearch", cors(), verifyToken, (req, res) => {
+  return fileSchema.find({ uploaderID: req.body.id }, (err, result) => {
+    if (err) {
+      res.json({
+        msg: "error",
+      });
+    } else {
+      res.json({
+        msg: result,
+      });
+    }
+  });
+});
 
 module.exports = router;
