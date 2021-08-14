@@ -4,6 +4,7 @@ const userModel = require("../Schema/userSchema");
 const verifyToken = require("../auth/verifyToken");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
+const upload = require("../fileUpload/multerImage");
 
 /// Read User
 router.post("/viewUser", cors(), verifyToken, (req, res) => {
@@ -39,10 +40,30 @@ router.post("/viewUser", cors(), verifyToken, (req, res) => {
 });
 
 ///Upload Foto
-router.post("/uploadProfile", cors(), verifyToken, (req, res) => {
-  res.json({
-    msg: "uploaded",
-  });
-});
+router.put(
+  "/uploadProfile",
+  cors(),
+  verifyToken,
+  upload.single("photoProfile"),
+  (req, res) => {
+    let payload = {
+      photoProfile: `https://research-gate.herokuapp.com/uploads/photoProfile/${req.file.filename}`,
+    };
+    return userModel.findOneAndUpdate(
+      { _id: req.body.id },
+      payload,
+      (err, result) => {
+        if (err) {
+          res.sendStatus(402);
+        } else {
+          res.json({
+            msg: "image uploaded",
+            linkImage: `https://research-gate.herokuapp.com/uploads/photoProfile/${req.file.filename}`,
+          });
+        }
+      }
+    );
+  }
+);
 
 module.exports = router;
