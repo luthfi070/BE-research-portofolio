@@ -54,7 +54,7 @@ router.post(
 );
 
 //Read File
-router.get("/research", (req, res) => {
+router.get("/research", cors(), (req, res) => {
   return fileSchema.find({}, (err, result) => {
     res.json({
       result: result,
