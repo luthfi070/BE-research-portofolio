@@ -17,9 +17,19 @@ router.put("/accResearch", cors(), verifyToken, (req, res) => {
     { _id: req.body.id },
     data,
     (err, result) => {
-      res.json({
-        msg: result,
-      });
+      if (result.status == "accepted") {
+        res.json({
+          result: `${result.articleTitle} has already been published`,
+        });
+      } else if (result.status == "rejected") {
+        res.json({
+          result: `${result.articleTitle} has already been rejected`,
+        });
+      } else if (result.status == "accepted") {
+        res.json({
+          result: `${result.articleTitle} has been published`,
+        });
+      }
     }
   );
 });
