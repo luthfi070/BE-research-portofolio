@@ -1,12 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const cors = require("cors");
-const jwt = require("jsonwebtoken");
 const verifyToken = require("../auth/verifyToken");
-const fs = require("fs");
 const fileSchema = require("../Schema/fileSchema");
-const upload = require("../fileUpload/multerFolder");
-const userSchema = require("../Schema/userSchema");
 
 router.put("/accResearch", cors(), verifyToken, (req, res) => {
   const data = {
@@ -32,6 +28,30 @@ router.put("/accResearch", cors(), verifyToken, (req, res) => {
       }
     }
   );
+});
+
+router.put("/rejResearch", cors(), verifyToken, (req, res) => {
+  const data = {
+    status: "rejected",
+  };
+
+  return fileSchema.findOneAndUpdate(
+    { _id: req.body.id },
+    data,
+    (err, result) => {
+      res.json({
+        result: `${result.articleTitle} has been rejected`,
+      });
+    }
+  );
+});
+
+router.get("/waitResearch", cors(), verifyToken, (req, res) => {
+  return fileSchema.find({ status: "waiting" }, (err, result) => {
+    res.json({
+      result: result,
+    });
+  });
 });
 
 module.exports = router;
