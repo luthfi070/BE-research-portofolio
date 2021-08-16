@@ -50,7 +50,7 @@ router.post("/register", cors(), (req, res) => {
   newUser.workStatus = "";
   newUser.researches = 0;
   newUser.readers = 0;
-  newUser.fields = 0;
+  newUser.fields = [];
   newUser.bookmarks = [];
   newUser.photoProfile = "";
 
