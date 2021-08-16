@@ -62,7 +62,9 @@ router.post("/register", cors(), (req, res) => {
     } else {
       newUser.save((err, data) => {
         if (err) {
-          console.log(error);
+          res.json({
+            msg: err,
+          });
         } else {
           res.json({
             msg: "User Registered",
