@@ -133,7 +133,7 @@ router.delete("/deleteResearch", cors(), verifyToken, (req, res) => {
 });
 
 //Get Research by ID
-router.get("/getDetailResearch", cors(), verifyToken, (req, res) => {
+router.post("/getDetailResearch", cors(), verifyToken, (req, res) => {
   return fileSchema.find({ _id: req.body.id }, (err, result) => {
     if (err) {
       res.sendStatus(404);
