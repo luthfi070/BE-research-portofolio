@@ -24,6 +24,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/regate", require("./auth/login"));
 app.use("/regate/user", require("./user/userAction"));
 app.use("/regate/file", require("./routeFile/file"));
+app.use("/regate/admin", require("./routeAdmin/researchAdmin"));
 
 app.use("/", (req, res) => {
   res.json({ message: "api connected" });

@@ -19,6 +19,7 @@ router.post(
       articleTitle: req.body.name,
       author: req.body.author,
       publicationDate: req.body.publicationDate,
+      status: "waiting",
       journalTitle: req.body.journalTitle,
       volume: req.body.volume,
       issue: req.body.issue,
