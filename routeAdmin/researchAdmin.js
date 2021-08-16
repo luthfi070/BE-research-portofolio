@@ -16,11 +16,12 @@ router.put("/accResearch", cors(), verifyToken, (req, res) => {
   return fileSchema.findOneAndUpdate(
     { _id: req.body.id },
     data,
-    (err, result) => {}
+    (err, result) => {
+      res.json({
+        msg: result,
+      });
+    }
   );
-  res.json({
-    msg: "hello",
-  });
 });
 
 module.exports = router;
