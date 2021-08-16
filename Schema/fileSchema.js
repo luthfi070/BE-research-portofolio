@@ -5,6 +5,7 @@ const fileSchema = new mongoose.Schema({
   articleTitle: String,
   author: String,
   publicationDate: dateFormat,
+  status: String,
   journalTitle: String,
   volume: Number,
   issue: Number,
