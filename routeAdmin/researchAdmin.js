@@ -25,7 +25,7 @@ router.put("/accResearch", cors(), verifyToken, (req, res) => {
         res.json({
           result: `${result.articleTitle} has already been rejected`,
         });
-      } else if (result.status == "accepted") {
+      } else if (result.status == "waiting") {
         res.json({
           result: `${result.articleTitle} has been published`,
         });
