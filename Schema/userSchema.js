@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
 
-const bookmarksSchema = new mongoose.Schema({ research: String });
+const bookmarksSchema = new mongoose.Schema({
+  Object,
+});
 const fieldSchema = new mongoose.Schema({ research: String });
 const userSchema = new mongoose.Schema({
   id: Number,
@@ -12,7 +14,7 @@ const userSchema = new mongoose.Schema({
   researches: Number,
   readers: Number,
   fields: [fieldSchema],
-  bookmarks: [bookmarksSchema],
+  bookmarks: [Object],
   photoProfile: String,
 });
 

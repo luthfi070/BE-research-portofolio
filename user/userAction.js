@@ -86,4 +86,54 @@ router.post("/getUserResearch", cors(), verifyToken, (req, res) => {
   });
 });
 
+///Bookmark
+router.post("/bookmarkResearch", cors(), verifyToken, (req, res) => {
+  const data = {
+    idUser: req.body.idUser,
+    idResearch: req.body.idResearch,
+  };
+
+  return userModel.find({ _id: data.idUser }, (err, result) => {
+    return fileSchema.find({ _id: data.idResearch }, (err, resultFile) => {
+      if (err) {
+        res.json({
+          msg: "Research does not existed",
+        });
+      } else {
+        result[0].bookmarks.push(resultFile[0]);
+
+        const dataBookmarks = {
+          bookmarks: result[0].bookmarks,
+        };
+
+        for (i = 0; i < result[0].bookmarks.length; i++) {
+          if (result[0].bookmarks[i]._id == req.body.idResearch) {
+            res.json({
+              msg: "Research already bookmarked",
+            });
+            break;
+          } else if (i == result[0].bookmarks.length) {
+            return userModel.findOneAndUpdate(
+              { _id: data.idUser },
+              dataBookmarks,
+              (err, result) => {
+                res.json({
+                  msg: "bookmarked",
+                });
+              }
+            );
+          }
+        }
+      }
+    });
+  });
+});
+
+///Delete Bookmarks
+// router.post("/deleteBookmarks", cors(), verifiyToken, (err,res) => {
+//   return userSchema.find({_id: req.body.id}, (err, resultUser) => {
+
+//   })
+// })
+
 module.exports = router;
