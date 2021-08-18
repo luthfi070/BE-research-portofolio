@@ -17,20 +17,27 @@ router.post("/viewUser", cors(), verifyToken, (req, res) => {
         .findOne({ _id: req.body.id })
         .then((result, err) => {
           if (result) {
-            res.json({
-              dataUser: [
-                {
-                  fullname: result.fullName,
-                  email: result.email,
-                  workStatus: result.workStatus,
-                  researches: result.researches,
-                  readers: result.readers,
-                  fields: result.fields,
-                  bookmarks: result.bookmarks,
-                },
-              ],
-              iat: data.iat,
-            });
+            return fileSchema.find(
+              { uploaderID: req.body.id },
+              (err, resultFile) => {
+                if (resultFile) {
+                  res.json({
+                    dataUser: {
+                      photoProfile: result.photoProfile,
+                      fullname: result.fullName,
+                      workStatus: result.workStatus,
+                      fields: result.fields,
+                      researches: result.researches,
+                      readers: result.readers,
+                      fieldsLength: result.fields.length,
+                      bookmarksLength: result.bookmarks.length,
+                    },
+                    userResearch: resultFile,
+                    iat: data.iat,
+                  });
+                }
+              }
+            );
           } else if (err) {
             res.json({
               msg: "User not found",
@@ -137,6 +144,7 @@ router.post("/getAllBookmark", cors(), verifyToken, (req, res) => {
     });
   });
 });
+
 ///Delete Bookmarks
 // router.post("/deleteBookmarks", cors(), verifiyToken, (err,res) => {
 //   return userSchema.find({_id: req.body.id}, (err, resultUser) => {
