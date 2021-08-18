@@ -86,7 +86,7 @@ router.post("/getUserResearch", cors(), verifyToken, (req, res) => {
   });
 });
 
-///Bookmark
+///Create Bookmark
 router.post("/bookmarkResearch", cors(), verifyToken, (req, res) => {
   const data = {
     idUser: req.body.idUser,
@@ -129,6 +129,14 @@ router.post("/bookmarkResearch", cors(), verifyToken, (req, res) => {
   });
 });
 
+///Get Bookmarked Research
+router.post("/getAllBookmark", cors(), verifyToken, (req, res) => {
+  return userModel.find({ _id: req.body.id }, (err, result) => {
+    res.json({
+      bookmarkList: result[0].bookmarks,
+    });
+  });
+});
 ///Delete Bookmarks
 // router.post("/deleteBookmarks", cors(), verifiyToken, (err,res) => {
 //   return userSchema.find({_id: req.body.id}, (err, resultUser) => {
