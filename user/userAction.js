@@ -146,10 +146,30 @@ router.post("/getAllBookmark", cors(), verifyToken, (req, res) => {
 });
 
 ///Delete Bookmarks
-// router.post("/deleteBookmarks", cors(), verifiyToken, (err,res) => {
-//   return userSchema.find({_id: req.body.id}, (err, resultUser) => {
-
-//   })
-// })
+router.post("/deleteBookmarks", cors(), verifyToken, (req, res) => {
+  return userModel.find({ _id: req.body.id }, (err, resultUser) => {
+    res.json({
+      resultUser,
+    });
+    // if (resultUser) {
+    //   for (i = 0; i < resultUser[0].bookmarks.length; i++) {
+    //     if (resultUser[0].bookmarks[i]._id == req.body.researchID) {
+    //       delete resultUser[0].bookmarks[i];
+    //       res.json({
+    //         result: resultUser[0].bookmarks,
+    //       });
+    //       break;
+    //     } else if (i == resultUser[0].bookmarks.length) {
+    //       continue;
+    //     } else {
+    //       res.sendStatus(404);
+    //       break;
+    //     }
+    //   }
+    // } else {
+    //   res.sendStatus(404);
+    // }
+  });
+});
 
 module.exports = router;
