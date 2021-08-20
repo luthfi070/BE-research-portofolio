@@ -105,28 +105,57 @@ router.post("/bookmarkResearch", cors(), verifyToken, (req, res) => {
         if (err) {
           res.sendStatus(404);
         } else {
-          result[0].bookmarks.push(resultFile[0]);
+          if (result[0].bookmarks.length == 0) {
+            result[0].bookmarks.push(resultFile[0]);
 
-          const dataBookmarks = {
-            bookmarks: result[0].bookmarks,
-          };
+            const dataBookmarks = {
+              bookmarks: result[0].bookmarks,
+            };
 
-          for (i = 0; i < result[0].bookmarks.length; i++) {
-            if (result[0].bookmarks[i]._id == req.body.idResearch) {
-              res.json({
-                msg: "Research already bookmarked",
-              });
-              break;
-            } else if (i == result[0].bookmarks.length) {
-              return userModel.findOneAndUpdate(
-                { _id: data.idUser },
-                dataBookmarks,
-                (err, result) => {
+            return userModel.findOneAndUpdate(
+              { _id: data.idUser },
+              dataBookmarks,
+              (err, result) => {
+                if (err) {
+                  res.sendStatus(404);
+                } else {
                   res.json({
                     msg: "bookmarked",
+                    result,
                   });
                 }
-              );
+              }
+            );
+          } else {
+            for (i = 0; i < result[0].bookmarks.length; i++) {
+              if (result[0].bookmarks[i]._id == req.body.idResearch) {
+                res.json({
+                  msg: "Research already bookmarked",
+                  result: result[0].bookmarks[i],
+                });
+                break;
+              } else if (result[0].bookmarks.length > i) {
+                result[0].bookmarks.push(resultFile[0]);
+                const dataBookmarks = {
+                  bookmarks: result[0].bookmarks,
+                };
+                return userModel.findOneAndUpdate(
+                  { _id: data.idUser },
+                  dataBookmarks,
+                  (err, result) => {
+                    if (err) {
+                      res.sendStatus(404);
+                    } else {
+                      res.json({
+                        msg: "bookmarked",
+                      });
+                    }
+                  }
+                );
+                break;
+              } else {
+                continue;
+              }
             }
           }
         }
@@ -145,30 +174,37 @@ router.post("/getAllBookmark", cors(), verifyToken, (req, res) => {
 });
 
 ///Delete Bookmarks
-// router.post("/deleteBookmarks", cors(), verifyToken, (req, res) => {
-//   return userModel.find({ _id: req.body.id }, (err, resultUser) => {
-//     res.json({
-//       resultUser,
-//     });
-//     // if (resultUser) {
-//     //   for (i = 0; i < resultUser[0].bookmarks.length; i++) {
-//     //     if (resultUser[0].bookmarks[i]._id == req.body.researchID) {
-//     //       delete resultUser[0].bookmarks[i];
-//     //       res.json({
-//     //         result: resultUser[0].bookmarks,
-//     //       });
-//     //       break;
-//     //     } else if (i == resultUser[0].bookmarks.length) {
-//     //       continue;
-//     //     } else {
-//     //       res.sendStatus(404);
-//     //       break;
-//     //     }
-//     //   }
-//     // } else {
-//     //   res.sendStatus(404);
-//     // }
-//   });
-// });
+router.post("/deleteBookmarks", cors(), verifyToken, (req, res) => {
+  return userModel.find({ _id: req.body.idUser }, (err, resultUser) => {
+    if (err) {
+      res.sendStatus(404);
+    } else {
+      for (i = 0; i < resultUser[0].bookmarks.length; i++) {
+        if (resultUser[0].bookmarks[i]._id == req.body.idResearch) {
+          let bookmark = {
+            bookmarks: resultUser[0].bookmarks[i],
+          };
+          return userModel.findOneAndUpdate(
+            { _id: req.body.idUser },
+            bookmark,
+            (err, resultUpdate) => {
+              if (err) {
+                res.sendStatus(404);
+              } else {
+                res.sendStatus(200);
+              }
+            }
+          );
+          break;
+        } else if (i == resultUser[0].bookmarks.length) {
+          res.sendStatus(404);
+          break;
+        } else {
+          continue;
+        }
+      }
+    }
+  });
+});
 
 module.exports = router;
