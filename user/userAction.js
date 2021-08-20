@@ -82,9 +82,7 @@ router.put(
 router.post("/getUserResearch", cors(), verifyToken, (req, res) => {
   return fileSchema.find({ uploaderID: req.body.id }, (err, result) => {
     if (err) {
-      res.json({
-        msg: "error",
-      });
+      res.sendStatus(404);
     } else {
       res.json({
         msg: result,
@@ -93,48 +91,49 @@ router.post("/getUserResearch", cors(), verifyToken, (req, res) => {
   });
 });
 
-///Create Bookmark
-// router.post("/bookmarkResearch", cors(), verifyToken, (req, res) => {
-//   const data = {
-//     idUser: req.body.idUser,
-//     idResearch: req.body.idResearch,
-//   };
+router.post("/bookmarkResearch", cors(), verifyToken, (req, res) => {
+  const data = {
+    idUser: req.body.idUser,
+    idResearch: req.body.idResearch,
+  };
 
-//   return userModel.find({ _id: data.idUser }, (err, result) => {
-//     return fileSchema.find({ _id: data.idResearch }, (err, resultFile) => {
-//       if (err) {
-//         res.json({
-//           msg: "Research does not existed",
-//         });
-//       } else {
-//         result[0].bookmarks.push(resultFile[0]);
+  return userModel.find({ _id: data.idUser }, (err, result) => {
+    if (err) {
+      res.sendStatus(404);
+    } else {
+      return fileSchema.find({ _id: data.idResearch }, (err, resultFile) => {
+        if (err) {
+          res.sendStatus(404);
+        } else {
+          result[0].bookmarks.push(resultFile[0]);
 
-//         const dataBookmarks = {
-//           bookmarks: result[0].bookmarks,
-//         };
+          const dataBookmarks = {
+            bookmarks: result[0].bookmarks,
+          };
 
-//         for (i = 0; i < result[0].bookmarks.length; i++) {
-//           if (result[0].bookmarks[i]._id == req.body.idResearch) {
-//             res.json({
-//               msg: "Research already bookmarked",
-//             });
-//             break;
-//           } else if (i == result[0].bookmarks.length) {
-//             return userModel.findOneAndUpdate(
-//               { _id: data.idUser },
-//               dataBookmarks,
-//               (err, result) => {
-//                 res.json({
-//                   msg: "bookmarked",
-//                 });
-//               }
-//             );
-//           }
-//         }
-//       }
-//     });
-//   });
-// });
+          for (i = 0; i < result[0].bookmarks.length; i++) {
+            if (result[0].bookmarks[i]._id == req.body.idResearch) {
+              res.json({
+                msg: "Research already bookmarked",
+              });
+              break;
+            } else if (i == result[0].bookmarks.length) {
+              return userModel.findOneAndUpdate(
+                { _id: data.idUser },
+                dataBookmarks,
+                (err, result) => {
+                  res.json({
+                    msg: "bookmarked",
+                  });
+                }
+              );
+            }
+          }
+        }
+      });
+    }
+  });
+});
 
 ///Get Bookmarked Research
 router.post("/getAllBookmark", cors(), verifyToken, (req, res) => {
