@@ -5,6 +5,7 @@ const bcrypt = require("bcrypt");
 const userModel = require("../Schema/userSchema");
 const cors = require("cors");
 const salt = bcrypt.genSaltSync(10);
+const verifyToken = require("./verifyToken");
 
 router.post("/login", cors(), (req, res) => {
   const userPayload = {
@@ -77,6 +78,17 @@ router.post("/register", cors(), (req, res) => {
           });
         }
       });
+    }
+  });
+});
+
+//Check Login
+router.post("/checkLogin", cors(), verifyToken, (req, res) => {
+  jwt.verify(req.token, "secretkey", (err, data) => {
+    if (err) {
+      res.sendStatus(403);
+    } else {
+      res.sendStatus(200);
     }
   });
 });
