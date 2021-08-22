@@ -191,11 +191,7 @@ router.put("/download", cors(), verifyToken, (req, res) => {
 router.post("/filterResearch", cors(), verifyToken, (req, res) => {
   fileSchema
     .find({})
-    .sort([
-      ["downloadCount", -1],
-      ["articleTitle", 1],
-      ["publicationDate", 1],
-    ])
+    .sort(req.body.filter)
     .exec((err, result) => {
       res.json({
         result,
