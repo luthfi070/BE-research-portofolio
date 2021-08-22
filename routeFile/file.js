@@ -187,4 +187,20 @@ router.put("/download", cors(), verifyToken, (req, res) => {
   });
 });
 
+// Most Read = -1, A - Z = 1, Z - A = -1, Newest, Oldest
+router.post("/filterResearch", cors(), verifyToken, (req, res) => {
+  fileSchema
+    .find({})
+    .sort([
+      ["downloadCount", -1],
+      ["articleTitle", 1],
+      ["publicationDate", 1],
+    ])
+    .exec((err, result) => {
+      res.json({
+        result,
+      });
+    });
+});
+
 module.exports = router;
