@@ -21,20 +21,27 @@ router.post("/viewUser", cors(), verifyToken, (req, res) => {
               { uploaderID: req.body.id },
               (err, resultFile) => {
                 if (resultFile) {
-                  res.json({
-                    dataUser: {
-                      photoProfile: result.photoProfile,
-                      fullname: result.fullName,
-                      workStatus: result.workStatus,
-                      fields: result.fields,
-                      researches: result.researches,
-                      readers: result.readers,
-                      fieldsLength: result.fields.length,
-                      bookmarksLength: result.bookmarks.length,
-                    },
-                    userResearch: resultFile,
-                    iat: data.iat,
-                  });
+                  return fileSchema.find(
+                    { _id: { $in: result.bookmarks } },
+                    (err, resultBookmark) => {
+                      if (resultBookmark) {
+                        res.json({
+                          dataUser: {
+                            photoProfile: result.photoProfile,
+                            fullname: result.fullName,
+                            workStatus: result.workStatus,
+                            fields: result.fields,
+                            researches: result.researches,
+                            readers: result.readers,
+                            fieldsLength: result.fields.length,
+                            bookmarksLength: resultBookmark.length,
+                          },
+                          userResearch: resultFile,
+                          iat: data.iat,
+                        });
+                      }
+                    }
+                  );
                 }
               }
             );
