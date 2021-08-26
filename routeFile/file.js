@@ -126,9 +126,7 @@ router.delete("/deleteResearch", cors(), verifyToken, (req, res) => {
     if (err) {
       res.sendStatus(404);
     } else {
-      res.json({
-        msg: "Deleted",
-      });
+      res.sendStatus(200);
     }
   });
 });

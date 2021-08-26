@@ -106,7 +106,7 @@ router.post("/bookmarkResearch", cors(), verifyToken, (req, res) => {
           res.sendStatus(404);
         } else {
           if (result[0].bookmarks.length == 0) {
-            result[0].bookmarks.push(resultFile[0]);
+            result[0].bookmarks.push(resultFile[0]._id);
 
             const dataBookmarks = {
               bookmarks: result[0].bookmarks,
@@ -121,21 +121,22 @@ router.post("/bookmarkResearch", cors(), verifyToken, (req, res) => {
                 } else {
                   res.json({
                     msg: "bookmarked",
-                    result,
+                    data: dataBookmarks,
                   });
                 }
               }
             );
           } else {
             for (i = 0; i < result[0].bookmarks.length; i++) {
-              if (result[0].bookmarks[i]._id == req.body.idResearch) {
+              if (result[0].bookmarks[i] == req.body.idResearch) {
                 res.json({
                   msg: "Research already bookmarked",
                   result: result[0].bookmarks[i],
                 });
                 break;
               } else if (result[0].bookmarks.length > i) {
-                result[0].bookmarks.push(resultFile[0]);
+                result[0].bookmarks.push(resultFile[0]._id);
+
                 const dataBookmarks = {
                   bookmarks: result[0].bookmarks,
                 };
@@ -152,7 +153,6 @@ router.post("/bookmarkResearch", cors(), verifyToken, (req, res) => {
                     }
                   }
                 );
-                break;
               } else {
                 continue;
               }
@@ -167,8 +167,15 @@ router.post("/bookmarkResearch", cors(), verifyToken, (req, res) => {
 ///Get Bookmarked Research
 router.post("/getAllBookmark", cors(), verifyToken, (req, res) => {
   return userModel.find({ _id: req.body.id }, (err, result) => {
-    res.json({
-      bookmarkList: result[0].bookmarks,
+    let data = [];
+    for (i = 0; i < result[0].bookmarks.length; i++) {
+      data.push(result[0].bookmarks[i]._id);
+    }
+
+    return fileSchema.find({ _id: { $in: data } }, (err, resultFile) => {
+      res.json({
+        bookmarked: resultFile,
+      });
     });
   });
 });
@@ -180,7 +187,9 @@ router.post("/deleteBookmarks", cors(), verifyToken, (req, res) => {
       res.sendStatus(404);
     } else {
       for (i = 0; i < resultUser[0].bookmarks.length; i++) {
-        if (resultUser[0].bookmarks[i]._id == req.body.idResearch) {
+        if (resultUser[0].bookmarks[i] == req.body.idResearch) {
+          resultUser[0].bookmarks.splice(i, 1);
+
           let bookmark = {
             bookmarks: resultUser[0].bookmarks[i],
           };
