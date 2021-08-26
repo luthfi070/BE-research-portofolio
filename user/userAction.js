@@ -191,8 +191,9 @@ router.post("/deleteBookmarks", cors(), verifyToken, (req, res) => {
           resultUser[0].bookmarks.splice(i, 1);
 
           let bookmark = {
-            bookmarks: resultUser[0].bookmarks[i],
+            bookmarks: resultUser[0].bookmarks,
           };
+
           return userModel.findOneAndUpdate(
             { _id: req.body.idUser },
             bookmark,
@@ -204,7 +205,6 @@ router.post("/deleteBookmarks", cors(), verifyToken, (req, res) => {
               }
             }
           );
-          break;
         } else if (i == resultUser[0].bookmarks.length) {
           res.sendStatus(404);
           break;
