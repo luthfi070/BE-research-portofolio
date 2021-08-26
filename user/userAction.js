@@ -5,6 +5,8 @@ const verifyToken = require("../auth/verifyToken");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const upload = require("../fileUpload/multerImage");
+const bcrypt = require("bcrypt");
+const salt = bcrypt.genSaltSync(10);
 const fileSchema = require("../Schema/fileSchema");
 
 /// Read User
@@ -29,7 +31,8 @@ router.post("/viewUser", cors(), verifyToken, (req, res) => {
                           dataUser: {
                             photoProfile: result.photoProfile,
                             fullname: result.fullName,
-                            workStatus: result.workStatus,
+                            role: result.role,
+                            affiliation: result.affiliation,
                             fields: result.fields,
                             researches: result.researches,
                             readers: result.readers,
@@ -56,6 +59,44 @@ router.post("/viewUser", cors(), verifyToken, (req, res) => {
         });
     }
   });
+});
+
+router.post("/getUser", cors(), verifyToken, (req, res) => {
+  return userModel.find({ _id: req.body.id }, (err, result) => {
+    if (err) {
+      res.sendStatus(404);
+    } else {
+      res.json({
+        result,
+      });
+    }
+  });
+});
+
+router.put("/editUser", cors(), verifyToken, (req, res) => {
+  // fullname, position, affiliation, field, email, password, photo
+  let payload = {
+    fullName: req.body.fullname,
+    role: req.body.role,
+    affiliation: req.body.affiliation,
+    fields: req.body.field,
+    email: req.body.email,
+    password: bcrypt.hashSync(req.body.password, salt),
+  };
+
+  return userModel.findOneAndUpdate(
+    { _id: req.body.id },
+    payload,
+    (err, resultUpdate) => {
+      if (err) {
+        res.sendStatus(404);
+      } else {
+        res.json({
+          resultUpdate,
+        });
+      }
+    }
+  );
 });
 
 ///Upload Foto

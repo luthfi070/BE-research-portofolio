@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema({
   workStatus: String,
   researches: Number,
   readers: Number,
-  fields: [Array],
+  fields: Array,
   bookmarks: [Array],
   photoProfile: String,
 });
