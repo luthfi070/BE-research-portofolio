@@ -62,7 +62,7 @@ router.post("/viewUser", cors(), verifyToken, (req, res) => {
 });
 
 router.post("/getUser", cors(), verifyToken, (req, res) => {
-  return userModel.find({ _id: req.body.id }, (err, result) => {
+  return userModel.findOne({ _id: req.body.id }, (err, result) => {
     if (err) {
       res.sendStatus(404);
     } else {
