@@ -15,75 +15,98 @@ router.post(
   verifyToken,
   upload.single("file"),
   (req, res) => {
-    const payload = {
-      articleTitle: req.body.name,
-      author: req.body.author,
-      publicationDate: req.body.publicationDate,
-      status: "waiting",
-      journalTitle: req.body.journalTitle,
-      volume: req.body.volume,
-      issue: req.body.issue,
-      pages: req.body.pages,
-      description: req.body.description,
-      fileName: req.file.filename,
-      file: req.file.path,
-      fileLink: `https://research-gate.herokuapp.com/uploads/researchFile/${req.file.filename}`,
-      uploaderID: req.body.uploaderID,
-      uploaderName: req.body.uploaderName,
-      downloadCount: 0,
-    };
-    fileSchema.create(payload, (err, data) => {
-      if (err) {
-        res.json({
-          result: err,
-        });
-      } else {
-        data.save((err, result) => {
-          if (err) {
-            res.json({
-              data: result,
-            });
-          } else {
-            return userSchema.find(
-              { _id: req.body.uploaderID },
-              (err, result) => {
-                const researchCount = {
-                  researches: result[0].researches + 1,
-                };
+    return userSchema.findOne(
+      { _id: req.body.uploaderID },
+      (err, resultUser) => {
+        if (err) {
+          res.sendStatus(404);
+        } else {
+          const payload = {
+            articleTitle: req.body.name,
+            author: req.body.author,
+            publicationDate: req.body.publicationDate,
+            status: "",
+            journalTitle: req.body.journalTitle,
+            volume: req.body.volume,
+            issue: req.body.issue,
+            pages: req.body.pages,
+            description: req.body.description,
+            fileName: req.file.filename,
+            file: req.file.path,
+            fileLink: `https://research-gate.herokuapp.com/uploads/researchFile/${req.file.filename}`,
+            uploaderID: req.body.uploaderID,
+            uploaderName: req.body.uploaderName,
+            downloadCount: 0,
+            bookmarkedBy: [],
+            uploaderInfo: resultUser,
+          };
+          fileSchema.create(payload, (err, data) => {
+            if (err) {
+              res.json({
+                result: err,
+              });
+            } else {
+              data.save((err, result) => {
                 if (err) {
-                  res.sendStatus(404);
+                  res.json({
+                    data: result,
+                  });
                 } else {
-                  return userSchema.findOneAndUpdate(
+                  return userSchema.find(
                     { _id: req.body.uploaderID },
-                    researchCount,
                     (err, result) => {
+                      const researchCount = {
+                        researches: result[0].researches + 1,
+                      };
                       if (err) {
-                        res.json({
-                          msg: result,
-                        });
+                        res.sendStatus(404);
                       } else {
-                        res.json({
-                          msg: "file submited",
-                          researchFileLink: `https://research-gate.herokuapp.com/uploads/researchFile/${req.file.filename}`,
-                        });
+                        return userSchema.findOneAndUpdate(
+                          { _id: req.body.uploaderID },
+                          researchCount,
+                          (err, result) => {
+                            if (err) {
+                              res.json({
+                                msg: result,
+                              });
+                            } else {
+                              res.json({
+                                msg: "file submited",
+                                researchFileLink: `https://research-gate.herokuapp.com/uploads/researchFile/${req.file.filename}`,
+                              });
+                            }
+                          }
+                        );
                       }
                     }
                   );
                 }
-              }
-            );
-          }
-        });
+              });
+            }
+          });
+        }
       }
-    });
+    );
   }
 );
 
 //Read File
 router.get("/research", cors(), (req, res) => {
   return fileSchema.find({}, (err, result) => {
+    let fileData = result;
+
+    for (i = 0; i < result.length; i++) {
+      let research = fileData[i];
+
+      if (result[i].bookmarkedBy == req.body.id) {
+        research["status"] = true;
+      } else {
+        research["status"] = false;
+      }
+    }
+
     res.json({
-      result: result,
+      fileData,
     });
   });
 });

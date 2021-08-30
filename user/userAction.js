@@ -145,79 +145,86 @@ router.post("/bookmarkResearch", cors(), verifyToken, (req, res) => {
     idResearch: req.body.idResearch,
   };
 
-  return userModel.find({ _id: data.idUser }, (err, result) => {
-    if (err) {
-      res.sendStatus(404);
-    } else {
-      return fileSchema.find({ _id: data.idResearch }, (err, resultFile) => {
-        if (err) {
-          res.sendStatus(404);
-        } else {
-          if (result[0].bookmarks.length == 0) {
-            result[0].bookmarks.push(resultFile[0]._id);
+  const bookmark = () => {
+    return userModel.findOne({ _id: data.idUser }, (err, resultUser) => {
+      resultUser.bookmarks.push(data.idResearch);
 
-            const dataBookmarks = {
-              bookmarks: result[0].bookmarks,
-            };
+      let newBookmark = {
+        bookmarks: resultUser.bookmarks,
+      };
 
-            return userModel.findOneAndUpdate(
-              { _id: data.idUser },
-              dataBookmarks,
-              (err, result) => {
+      return userModel.findOneAndUpdate(
+        { _id: data.idUser },
+        newBookmark,
+        (err, resultBookmark) => {
+          if (err) {
+            res.sendStatus(404);
+          } else {
+            return fileSchema.findOne(
+              { _id: data.idResearch },
+              (err, resultFile) => {
                 if (err) {
                   res.sendStatus(404);
                 } else {
-                  res.json({
-                    msg: "bookmarked",
-                    data: dataBookmarks,
-                  });
+                  resultFile.bookmarkedBy.push(data.idUser);
+
+                  let newBookmarker = {
+                    bookmarkedBy: resultFile.bookmarkedBy,
+                  };
+
+                  return fileSchema.findOneAndUpdate(
+                    { _id: data.idResearch },
+                    newBookmarker,
+                    (err, newBookmarker) => {
+                      if (err) {
+                        res.sendStatus(400);
+                      } else {
+                        res.json({
+                          msg: "Bookmarked",
+                        });
+                      }
+                    }
+                  );
                 }
               }
             );
-          } else {
-            for (i = 0; i < result[0].bookmarks.length; i++) {
-              if (result[0].bookmarks[i] == req.body.idResearch) {
-                res.json({
-                  msg: "Research already bookmarked",
-                  result: result[0].bookmarks[i],
-                });
-                break;
-              } else if (result[0].bookmarks.length > i) {
-                result[0].bookmarks.push(resultFile[0]._id);
-
-                const dataBookmarks = {
-                  bookmarks: result[0].bookmarks,
-                };
-                return userModel.findOneAndUpdate(
-                  { _id: data.idUser },
-                  dataBookmarks,
-                  (err, result) => {
-                    if (err) {
-                      res.sendStatus(404);
-                    } else {
-                      res.json({
-                        msg: "bookmarked",
-                      });
-                    }
-                  }
-                );
-              } else {
-                continue;
-              }
-            }
           }
         }
-      });
+      );
+    });
+  };
+
+  return fileSchema.findOne(
+    { _id: data.idResearch },
+    (err, resultBookmarked) => {
+      if (resultBookmarked.bookmarkedBy.length == 0) {
+        bookmark();
+      } else {
+        for (i = 0; i < resultBookmarked.bookmarkedBy.length; i++) {
+          if (resultBookmarked.bookmarkedBy[i] == data.idUser) {
+            res.json({
+              msg: "Research already Bookmarked",
+            });
+            break;
+          } else if (resultBookmarked.bookmarkedBy.length > i) {
+            bookmark();
+            break;
+          } else {
+            continue;
+          }
+        }
+      }
     }
-  });
+  );
 });
 
 ///Get Bookmarked Research
 router.post("/getAllBookmark", cors(), verifyToken, (req, res) => {
-  return userModel.find({ _id: req.body.id }, (err, result) => {
+  return userModel.findOne({ _id: req.body.id }, (err, result) => {
     let data = [];
-    for (i = 0; i < result[0].bookmarks.length; i++) {
-      data.push(result[0].bookmarks[i]._id);
+    console.log(result);
+    for (i = 0; i < result.bookmarks.length; i++) {
+      data.push(result.bookmarks[i]);
     }
 
     return fileSchema.find({ _id: { $in: data } }, (err, resultFile) => {
@@ -230,31 +237,64 @@ router.post("/getAllBookmark", cors(), verifyToken, (req, res) => {
 
 ///Delete Bookmarks
 router.post("/deleteBookmarks", cors(), verifyToken, (req, res) => {
-  return userModel.find({ _id: req.body.idUser }, (err, resultUser) => {
+  return userModel.findOne({ _id: req.body.idUser }, (err, resultUser) => {
     if (err) {
       res.sendStatus(404);
     } else {
-      for (i = 0; i < resultUser[0].bookmarks.length; i++) {
-        if (resultUser[0].bookmarks[i] == req.body.idResearch) {
-          resultUser[0].bookmarks.splice(i, 1);
+      for (i = 0; i < resultUser.bookmarks.length; i++) {
+        if (resultUser.bookmarks[i] == req.body.idResearch) {
+          resultUser.bookmarks.splice(i, 1);
 
-          let bookmark = {
-            bookmarks: resultUser[0].bookmarks,
+          let newBookmarkUser = {
+            bookmarks: resultUser.bookmarks,
           };
 
           return userModel.findOneAndUpdate(
             { _id: req.body.idUser },
-            bookmark,
+            newBookmarkUser,
             (err, resultUpdate) => {
               if (err) {
                 res.sendStatus(404);
               } else {
-                res.sendStatus(200);
+                return fileSchema.findOne(
+                  { _id: req.body.idResearch },
+                  (err, resultFile) => {
+                    if (err) {
+                      res.sendStatus(404);
+                    } else {
+                      for (a = 0; a < resultFile.bookmarkedBy.length; a++) {
+                        if (resultFile.bookmarkedBy[a] == req.body.idUser) {
+                          console.log("asd");
+                          resultFile.bookmarkedBy.splice(a, 1);
+
+                          let newBookmarkFile = {
+                            bookmarkedBy: resultFile.bookmarkedBy,
+                          };
+
+                          return fileSchema.findOneAndUpdate(
+                            { _id: req.body.idResearch },
+                            newBookmarkFile,
+                            (err, resultUpdateFile) => {
+                              if (err) {
+                                res.sendStatus(404);
+                              } else {
+                                res.json({
+                                  msg: "deleted",
+                                });
+                              }
+                            }
+                          );
+                          break;
+                        } else {
+                          continue;
+                        }
+                      }
+                    }
+                  }
+                );
               }
             }
           );
-        } else if (i == resultUser[0].bookmarks.length) {
-          res.sendStatus(404);
           break;
         } else {
           continue;

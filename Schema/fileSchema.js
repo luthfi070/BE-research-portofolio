@@ -16,7 +16,9 @@ const fileSchema = new mongoose.Schema({
   fileLink: String,
   uploaderID: String,
   uploaderName: String,
+  uploaderInfo: Object,
   downloadCount: Number,
+  bookmarkedBy: Array,
 });
 
 module.exports = mongoose.model("file", fileSchema);

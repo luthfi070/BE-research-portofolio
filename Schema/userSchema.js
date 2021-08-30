@@ -11,7 +11,7 @@ const userSchema = new mongoose.Schema({
   researches: Number,
   readers: Number,
   fields: Array,
-  bookmarks: [Array],
+  bookmarks: Array,
   photoProfile: String,
 });
 
