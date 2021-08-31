@@ -91,7 +91,7 @@ router.post(
 );
 
 //Read File
-router.get("/research", cors(), (req, res) => {
+router.post("/research", cors(), (req, res) => {
   return fileSchema.find({}, (err, result) => {
     let fileData = result;
 
