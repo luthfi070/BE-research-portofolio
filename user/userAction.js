@@ -233,7 +233,7 @@ router.post("/getAllBookmark", cors(), verifyToken, (req, res) => {
       for (i = 0; i < resultFile.length; i++) {
         let research = fileData[i];
 
-        if (result[i].bookmarkedBy == req.body.id) {
+        if (resultFile[i].bookmarkedBy == req.body.id) {
           research["status"] = true;
         } else {
           research["status"] = false;
