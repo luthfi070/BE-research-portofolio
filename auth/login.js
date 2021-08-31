@@ -29,10 +29,10 @@ router.post("/login", cors(), (req, res) => {
           });
         });
       } else {
-        res.sendStatus(400);
+        res.sendStatus(400).send(" wrong email");
       }
     } else {
-      res.sendStatus(400);
+      res.sendStatus(400).send("wrong password");
     }
   });
 });
