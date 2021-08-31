@@ -27,6 +27,18 @@ router.post("/viewUser", cors(), verifyToken, (req, res) => {
                     { _id: { $in: result.bookmarks } },
                     (err, resultBookmark) => {
                       if (resultBookmark) {
+                        let fileData = resultBookmark;
+
+                        for (i = 0; i < resultBookmark.length; i++) {
+                          let research = fileData[i];
+
+                          if (resultBookmark[i].bookmarkedBy == req.body.id) {
+                            research["status"] = true;
+                          } else {
+                            research["status"] = false;
+                          }
+                        }
+
                         res.json({
                           dataUser: {
                             photoProfile: result.photoProfile,
@@ -39,7 +51,7 @@ router.post("/viewUser", cors(), verifyToken, (req, res) => {
                             fieldsLength: result.fields.length,
                             bookmarksLength: resultBookmark.length,
                           },
-                          userResearch: resultFile,
+                          userResearch: fileData,
                           iat: data.iat,
                         });
                       }
