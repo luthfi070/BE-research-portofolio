@@ -228,8 +228,20 @@ router.post("/getAllBookmark", cors(), verifyToken, (req, res) => {
     }
 
     return fileSchema.find({ _id: { $in: data } }, (err, resultFile) => {
+      let fileData = resultFile;
+
+      for (i = 0; i < resultFile.length; i++) {
+        let research = fileData[i];
+
+        if (result[i].bookmarkedBy == req.body.id) {
+          research["status"] = true;
+        } else {
+          research["status"] = false;
+        }
+      }
+
       res.json({
-        bookmarked: resultFile,
+        bookmarked: fileData,
       });
     });
   });
