@@ -146,38 +146,36 @@ router.put("/editResearch", cors(), verifyToken, (req, res) => {
 //Delete Research
 router.post("/deleteResearch", cors(), verifyToken, (req, res) => {
   return fileSchema.findOneAndRemove({ _id: req.body.id }, (err, result) => {
-    return userModel.findOne({ _id: req.body.idUser }, (err, resultFind) => {
-      if (err) {
-        res.sendStatus(404);
-      } else {
-        for (i = 0; i < resultFind.bookmarks.length; i++) {
-          if (resultFind.bookmarks[i] == req.body.id) {
-            resultFind.bookmarks.splice(i, 1);
+    if (err) {
+      res.sendStatus(400);
+    } else {
+      return userSchema.findOne(
+        { _id: result.uploaderID },
+        (err, resultUser) => {
+          if (err) {
+            res.sendStatus(404);
+          } else {
+            let decrementResearchs = resultUser.researches - 1;
 
-            let newBookmarksList = {
-              bookmarks: resultFind.bookmarks,
+            let newResearches = {
+              researches: decrementResearchs,
             };
 
-            return userModel.findOneAndUpdate(
-              { _id: req.body.id },
-              newBookmarksList,
+            return userSchema.findOneAndUpdate(
+              { _id: result.uploaderID },
+              newResearches,
               (err, resultDelete) => {
                 if (err) {
                   res.sendStatus(404);
                 } else {
-                  res.json({
-                    msg: "deleted",
-                  });
+                  res.sendStatus(200);
                 }
               }
             );
-            break;
-          } else {
-            continue;
           }
         }
-      }
-    });
+      );
+    }
   });
 });
 
