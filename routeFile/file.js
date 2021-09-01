@@ -185,6 +185,18 @@ router.post("/getDetailResearch", cors(), verifyToken, (req, res) => {
     if (err) {
       res.sendStatus(404);
     } else {
+      let fileData = result;
+
+      for (i = 0; i < result[0].bookmarkedBy.length; i++) {
+        let research = fileData[i];
+
+        if (result[i].bookmarkedBy == req.body.id) {
+          research["status"] = true;
+        } else {
+          research["status"] = false;
+        }
+      }
+
       res.json({
         result: result,
       });
