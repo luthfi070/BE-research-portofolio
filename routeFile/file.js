@@ -190,7 +190,7 @@ router.post("/getDetailResearch", cors(), verifyToken, (req, res) => {
       for (i = 0; i < result[0].bookmarkedBy.length; i++) {
         let research = fileData[i];
 
-        if (result[i].bookmarkedBy == req.body.id) {
+        if (result[i].bookmarkedBy == req.body.idUser) {
           research["status"] = true;
         } else {
           research["status"] = false;
