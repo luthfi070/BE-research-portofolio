@@ -198,7 +198,7 @@ router.post("/getDetailResearch", cors(), verifyToken, (req, res) => {
       }
 
       res.json({
-        result: result,
+        result: fileData,
       });
     }
   });
