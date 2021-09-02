@@ -23,22 +23,28 @@ router.post("/viewUser", cors(), verifyToken, (req, res) => {
               { uploaderID: req.body.id },
               (err, resultFile) => {
                 if (resultFile) {
+                  let fileData = resultFile;
+
+                  for (i = 0; i < resultFile.length; i++) {
+                    let research = fileData[i];
+
+                    if (resultFile[i].bookmarkedBy.length > 0) {
+                      for (a = 0; a < resultFile[i].bookmarkedBy.length; a++) {
+                        if (resultFile[i].bookmarkedBy[a] == req.body.id) {
+                          research["status"] = true;
+                        } else {
+                          research["status"] = false;
+                        }
+                      }
+                    } else {
+                      research["status"] = false;
+                    }
+                  }
+
                   return fileSchema.find(
                     { _id: { $in: result.bookmarks } },
                     (err, resultBookmark) => {
                       if (resultBookmark) {
-                        let fileData = resultBookmark;
-
-                        for (i = 0; i < resultBookmark.length; i++) {
-                          let research = fileData[i];
-
-                          if (resultBookmark[i].bookmarkedBy == req.body.id) {
-                            research["status"] = true;
-                          } else {
-                            research["status"] = false;
-                          }
-                        }
-
                         res.json({
                           dataUser: {
                             photoProfile: result.photoProfile,
@@ -51,7 +57,7 @@ router.post("/viewUser", cors(), verifyToken, (req, res) => {
                             fieldsLength: result.fields.length,
                             bookmarksLength: resultBookmark.length,
                           },
-                          userResearch: fileData,
+                          userResearch: resultFile,
                           iat: data.iat,
                         });
                       }

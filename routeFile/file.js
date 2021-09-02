@@ -98,8 +98,14 @@ router.post("/research", cors(), (req, res) => {
     for (i = 0; i < result.length; i++) {
       let research = fileData[i];
 
-      if (result[i].bookmarkedBy == req.body.id) {
-        research["status"] = true;
+      if (result[i].bookmarkedBy.length > 0) {
+        for (a = 0; a < result[i].bookmarkedBy.length; a++) {
+          if (result[i].bookmarkedBy[a] == req.body.id) {
+            research["status"] = true;
+          } else {
+            research["status"] = false;
+          }
+        }
       } else {
         research["status"] = false;
       }
@@ -181,24 +187,26 @@ router.post("/deleteResearch", cors(), verifyToken, (req, res) => {
 
 //Get Research by ID
 router.post("/getDetailResearch", cors(), verifyToken, (req, res) => {
-  return fileSchema.find({ _id: req.body.id }, (err, result) => {
+  return fileSchema.findOne({ _id: req.body.id }, (err, result) => {
     if (err) {
       res.sendStatus(404);
     } else {
-      let fileData = result;
+      let research = result;
 
-      for (i = 0; i < result[0].bookmarkedBy.length; i++) {
-        let research = fileData[i];
-
-        if (result[i].bookmarkedBy == req.body.idUser) {
-          research["status"] = true;
-        } else {
-          research["status"] = false;
+      if (result.bookmarkedBy.length > 0) {
+        for (a = 0; a < result.bookmarkedBy.length; a++) {
+          if (result.bookmarkedBy[a] == req.body.idUser) {
+            research["status"] = true;
+          } else {
+            research["status"] = false;
+          }
         }
+      } else {
+        research["status"] = false;
       }
 
       res.json({
-        result: fileData,
+        result: result,
       });
     }
   });
@@ -251,6 +259,22 @@ router.post("/filterResearch", cors(), verifyToken, (req, res) => {
     .find({})
     .sort(req.body.filter)
     .exec((err, result) => {
+      for (i = 0; i < result.length; i++) {
+        let research = result[i];
+
+        if (result[i].bookmarkedBy.length > 0) {
+          for (a = 0; a < result[i].bookmarkedBy.length; a++) {
+            if (result[i].bookmarkedBy[a] == req.body.idUser) {
+              research["status"] = true;
+            } else {
+              research["status"] = false;
+            }
+          }
+        } else {
+          research["status"] = false;
+        }
+      }
+
       res.json({
         result,
       });
