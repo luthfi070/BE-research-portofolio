@@ -92,27 +92,39 @@ router.post(
 
 //Read File
 router.post("/research", cors(), (req, res) => {
-  return fileSchema.find({}, (err, result) => {
-    let fileData = result;
+  let newUser;
+  return userSchema.find({}, (err, resultUser) => {
+    newUser = resultUser;
+    return fileSchema.find({}, (err, result) => {
+      let fileData = result;
+      for (i = 0; i < result.length; i++) {
+        let research = fileData[i];
 
-    for (i = 0; i < result.length; i++) {
-      let research = fileData[i];
+        if (result[i].bookmarkedBy.length > 0) {
+          for (a = 0; a < result[i].bookmarkedBy.length; a++) {
+            if (result[i].bookmarkedBy[a] == req.body.id) {
+              research["status"] = true;
+            } else {
+              research["status"] = false;
+            }
+          }
+        } else {
+          research["status"] = false;
+        }
 
-      if (result[i].bookmarkedBy.length > 0) {
-        for (a = 0; a < result[i].bookmarkedBy.length; a++) {
-          if (result[i].bookmarkedBy[a] == req.body.id) {
-            research["status"] = true;
+        for (j = 0; j < newUser.length; j++) {
+          if (newUser[j]._id == research["uploaderID"]) {
+            research["uploaderInfo"] = newUser[j];
+            break;
           } else {
-            research["status"] = false;
+            continue;
           }
         }
-      } else {
-        research["status"] = false;
       }
-    }
 
-    res.json({
-      fileData,
+      res.json({
+        fileData,
+      });
     });
   });
 });
@@ -188,27 +200,31 @@ router.post("/deleteResearch", cors(), verifyToken, (req, res) => {
 //Get Research by ID
 router.post("/getDetailResearch", cors(), verifyToken, (req, res) => {
   return fileSchema.findOne({ _id: req.body.id }, (err, result) => {
-    if (err) {
-      res.sendStatus(404);
-    } else {
-      let research = result;
-
-      if (result.bookmarkedBy.length > 0) {
-        for (a = 0; a < result.bookmarkedBy.length; a++) {
-          if (result.bookmarkedBy[a] == req.body.idUser) {
-            research["status"] = true;
-          } else {
-            research["status"] = false;
-          }
-        }
+    return userSchema.findOne({ _id: result.uploaderID }, (err, resultUser) => {
+      if (err) {
+        res.sendStatus(404);
       } else {
-        research["status"] = false;
-      }
+        let research = result;
 
-      res.json({
-        result: result,
-      });
-    }
+        if (result.bookmarkedBy.length > 0) {
+          for (a = 0; a < result.bookmarkedBy.length; a++) {
+            if (result.bookmarkedBy[a] == req.body.idUser) {
+              research["status"] = true;
+            } else {
+              research["status"] = false;
+            }
+          }
+        } else {
+          research["status"] = false;
+        }
+
+        research["uploaderInfo"] = resultUser;
+
+        res.json({
+          result: result,
+        });
+      }
+    });
   });
 });
 
@@ -255,30 +271,47 @@ router.put("/download", cors(), verifyToken, (req, res) => {
 
 // Most Read = -1, A - Z = 1, Z - A = -1, Newest, Oldest
 router.post("/filterResearch", cors(), verifyToken, (req, res) => {
-  fileSchema
-    .find({})
-    .sort(req.body.filter)
-    .exec((err, result) => {
-      for (i = 0; i < result.length; i++) {
-        let research = result[i];
+  let newUser;
+  return userSchema.find({}, (err, resultUser) => {
+    if (err) {
+      res.sendStatus(404);
+    } else {
+      newUser = resultUser;
+      fileSchema
+        .find({})
+        .sort(req.body.filter)
+        .exec((err, result) => {
+          for (i = 0; i < result.length; i++) {
+            let research = result[i];
 
-        if (result[i].bookmarkedBy.length > 0) {
-          for (a = 0; a < result[i].bookmarkedBy.length; a++) {
-            if (result[i].bookmarkedBy[a] == req.body.idUser) {
-              research["status"] = true;
+            if (result[i].bookmarkedBy.length > 0) {
+              for (a = 0; a < result[i].bookmarkedBy.length; a++) {
+                if (result[i].bookmarkedBy[a] == req.body.idUser) {
+                  research["status"] = true;
+                } else {
+                  research["status"] = false;
+                }
+              }
             } else {
               research["status"] = false;
             }
-          }
-        } else {
-          research["status"] = false;
-        }
-      }
 
-      res.json({
-        result,
-      });
-    });
+            for (j = 0; j < newUser.length; j++) {
+              if (newUser[j]._id == research["uploaderID"]) {
+                research["uploaderInfo"] = newUser[j];
+                break;
+              } else {
+                continue;
+              }
+            }
+          }
+
+          res.json({
+            result,
+          });
+        });
+    }
+  });
 });
 
 module.exports = router;

@@ -11,6 +11,7 @@ const fileSchema = require("../Schema/fileSchema");
 
 /// Read User
 router.post("/viewUser", cors(), verifyToken, (req, res) => {
+  let newUser;
   jwt.verify(req.token, "secretkey", (err, data) => {
     if (err) {
       res.sendStatus(403);
@@ -39,6 +40,8 @@ router.post("/viewUser", cors(), verifyToken, (req, res) => {
                     } else {
                       research["status"] = false;
                     }
+
+                    research["uploaderInfo"] = result;
                   }
 
                   return fileSchema.find(
@@ -238,30 +241,47 @@ router.post("/bookmarkResearch", cors(), verifyToken, (req, res) => {
 
 ///Get Bookmarked Research
 router.post("/getAllBookmark", cors(), verifyToken, (req, res) => {
-  return userModel.findOne({ _id: req.body.id }, (err, result) => {
-    let data = [];
-    console.log(result);
-    for (i = 0; i < result.bookmarks.length; i++) {
-      data.push(result.bookmarks[i]);
-    }
-
-    return fileSchema.find({ _id: { $in: data } }, (err, resultFile) => {
-      let fileData = resultFile;
-
-      for (i = 0; i < resultFile.length; i++) {
-        let research = fileData[i];
-
-        if (resultFile[i].bookmarkedBy == req.body.id) {
-          research["status"] = true;
-        } else {
-          research["status"] = false;
+  let newUser;
+  return userModel.find({}, (err, resultUser) => {
+    newUser = resultUser;
+    if (err) {
+      res.sendStatus(404);
+    } else {
+      return userModel.findOne({ _id: req.body.id }, (err, result) => {
+        let data = [];
+        console.log(result);
+        for (i = 0; i < result.bookmarks.length; i++) {
+          data.push(result.bookmarks[i]);
         }
-      }
 
-      res.json({
-        bookmarked: fileData,
+        return fileSchema.find({ _id: { $in: data } }, (err, resultFile) => {
+          let fileData = resultFile;
+
+          for (i = 0; i < resultFile.length; i++) {
+            let research = fileData[i];
+
+            if (resultFile[i].bookmarkedBy == req.body.id) {
+              research["status"] = true;
+            } else {
+              research["status"] = false;
+            }
+
+            for (j = 0; j < newUser.length; j++) {
+              if (newUser[j]._id == research["uploaderID"]) {
+                research["uploaderInfo"] = newUser[j];
+                break;
+              } else {
+                continue;
+              }
+            }
+          }
+
+          res.json({
+            bookmarked: fileData,
+          });
+        });
       });
-    });
+    }
   });
 });
 
