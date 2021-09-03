@@ -249,7 +249,6 @@ router.post("/getAllBookmark", cors(), verifyToken, (req, res) => {
     } else {
       return userModel.findOne({ _id: req.body.id }, (err, result) => {
         let data = [];
-        console.log(result);
         for (i = 0; i < result.bookmarks.length; i++) {
           data.push(result.bookmarks[i]);
         }
@@ -260,8 +259,14 @@ router.post("/getAllBookmark", cors(), verifyToken, (req, res) => {
           for (i = 0; i < resultFile.length; i++) {
             let research = fileData[i];
 
-            if (resultFile[i].bookmarkedBy == req.body.id) {
-              research["status"] = true;
+            if (resultFile[i].bookmarkedBy.length > 0) {
+              for (a = 0; a < resultFile[i].bookmarkedBy.length; a++) {
+                if (resultFile[i].bookmarkedBy[a] == req.body.id) {
+                  research["status"] = true;
+                } else {
+                  research["status"] = false;
+                }
+              }
             } else {
               research["status"] = false;
             }
